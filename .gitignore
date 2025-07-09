@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.nox/
+.coverage*
+.cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# dotenv
+.env
+
+# virtualenv
+.venv/
+venv/
+
+# SQLite
+*.db
+*.sqlite3
+
+# Docker
+docker-compose.override.yml
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# Mac
+.DS_Store
