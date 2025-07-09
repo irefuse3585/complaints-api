@@ -1,10 +1,24 @@
+# docker-compose.yml
+
 services:
   app:
     build: .
     container_name: complaint_service
+
+    # bind host port 8000 to container port 8000
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app:ro
+
+    # load environment variables from .env
     env_file:
       - .env
+
+    # mount project code into container
+    volumes:
+      - ./:/app
+      # named volume for SQLite data storage
+      - db_data:/app/data
+
+volumes:
+  # persistent volume to keep the database across restarts
+  db_data:
