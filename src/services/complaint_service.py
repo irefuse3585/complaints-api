@@ -22,7 +22,11 @@ from ..clients.openai_client import categorize_complaint
 from ..clients.sentiment import get_sentiment
 from ..clients.spam import check_spam
 from ..models.complaint import Complaint
-from ..schemas.complaint import ComplaintCreate, ComplaintResponse
+from ..schemas.complaint import (
+    ComplaintCreate,
+    ComplaintResponse,
+    ComplaintWithTextResponse,
+)
 from ..schemas.enums import CategoryEnum, SentimentEnum, StatusEnum
 
 logger = logging.getLogger(__name__)
@@ -160,7 +164,7 @@ class ComplaintService:
 
     async def get_complaints(
         self, status: Optional[StatusEnum] = None, since: Optional[datetime] = None
-    ) -> List[ComplaintResponse]:
+    ) -> List[ComplaintWithTextResponse]:
         """
         Retrieve complaints with optional filtering by status and timestamp.
 
@@ -169,7 +173,7 @@ class ComplaintService:
             since (Optional[datetime]): Only complaints created after this timestamp.
 
         Returns:
-            List[ComplaintResponse]: List of complaints.
+            List[ComplaintWithTextResponse]: List of complaints.
         """
         logger.debug("Querying complaints (status=%s, since=%s)", status, since)
         query = select(Complaint)
@@ -179,7 +183,7 @@ class ComplaintService:
             query = query.where(Complaint.timestamp >= since)
         results = (await self.session.execute(query)).scalars().all()
         logger.info("Complaints queried, count=%d", len(results))
-        return [ComplaintResponse.from_orm(c) for c in results]
+        return [ComplaintWithTextResponse.from_orm(c) for c in results]
 
     async def update_complaint_status(
         self, complaint_id: int, status: StatusEnum

@@ -13,7 +13,11 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..core.dependencies import get_db
-from ..schemas.complaint import ComplaintCreate, ComplaintResponse
+from ..schemas.complaint import (
+    ComplaintCreate,
+    ComplaintResponse,
+    ComplaintWithTextResponse,
+)
 from ..schemas.enums import StatusEnum
 from ..services.complaint_service import (  # type: ignore[attr-defined]  # noqa: E501
     ComplaintService,
@@ -95,7 +99,7 @@ async def read_complaint_endpoint(
 
 @router.get(
     "/",
-    response_model=List[ComplaintResponse],
+    response_model=List[ComplaintWithTextResponse],
     status_code=status.HTTP_200_OK,
     summary="List complaints (with optional filters)",
     description=(
@@ -107,7 +111,7 @@ async def list_complaints_endpoint(
     status: Optional[StatusEnum] = STATUS_QUERY,
     since: Optional[datetime] = SINCE_QUERY,
     db: AsyncSession = DB_DEP,
-) -> List[ComplaintResponse]:
+) -> List[ComplaintWithTextResponse]:
     """
     Endpoint to get a list of complaints, filterable by status and timestamp.
     Useful for n8n workflows.
