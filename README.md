@@ -27,7 +27,7 @@ A FastAPI-based service for collecting customer complaints and enriching them vi
 
 ```bash
 # Clone the repo
-git clone <your-repo-url>
+git clone https://github.com/irefuse3585/complaints-api
 cd complaints-api
 
 # Install Python dependencies
