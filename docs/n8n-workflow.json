@@ -1,0 +1,382 @@
+{
+  "name": "n8n-workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1080,
+        200
+      ],
+      "id": "44bcb67b-6e14-45f6-91d9-fdbe02816c86",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -640,
+        200
+      ],
+      "id": "185ea696-447c-4da3-827c-8fa1f5effcde",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "chatId": "=",
+        "text": "=🚨 New technical complaint!\nID: {{$json.id}}\nTime: {{$json.timestamp}}\nText: {{$json.text}}\nSentiment: {{$json.sentiment}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "563c42d8-aca9-4943-bb77-bc87cf585fdb",
+      "name": "Send a text message",
+      "webhookId": "96e335b5-a0f1-4d19-88f6-3d97fd1f5849",
+      "credentials": {
+        "telegramApi": {
+          "id": "J95w1fHXY3fAxvlQ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{$env.API_URL + '/complaints/' + $('If technical').item.json.id + '/status'}}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{ \"status\": \"closed\" }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        80
+      ],
+      "id": "8a22bdf9-079a-426f-a700-cf386543dd79",
+      "name": "Close Technical Complaint"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1gVb4IntcQnVu-Fnmq9HuhWm1edn9Cma0jePsm6lyN-g",
+          "mode": "list",
+          "cachedResultName": "Testtttt",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gVb4IntcQnVu-Fnmq9HuhWm1edn9Cma0jePsm6lyN-g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Лист1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gVb4IntcQnVu-Fnmq9HuhWm1edn9Cma0jePsm6lyN-g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "text": "={{ $json.text }}",
+            "sentiment": "={{ $json.sentiment }}",
+            "category": "={{ $json.category }}",
+            "time": "={{ $json.timestamp.toDateTime().toFormat('dd.MM.yyyy HH:mm') }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sentiment",
+              "displayName": "sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        180,
+        120
+      ],
+      "id": "a8bc3629-5445-4fd8-88b6-0809c585f825",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "m7feS6y0oAf2EJQR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "846fffe1-8bde-477c-b337-0b61cf38f7f6",
+              "leftValue": "={{$json[\"category\"]}}",
+              "rightValue": "payment",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -20,
+        340
+      ],
+      "id": "ecea6875-5197-49ca-83de-df45b88e7737",
+      "name": "If payment"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "78b400d0-8ab9-4352-9366-3af61d1edee2",
+              "leftValue": "={{$json[\"category\"]}}",
+              "rightValue": "technical",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -220,
+        100
+      ],
+      "id": "0480cf73-f6a2-4adc-b046-d583279fefc7",
+      "name": "If technical"
+    },
+    {
+      "parameters": {
+        "url": "={{$env.API_URL + '/complaints'}}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "open"
+            },
+            {
+              "name": "since",
+              "value": "={{$now.minus({ hours: 1 }).toISO()}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -860,
+        200
+      ],
+      "id": "293f68be-d584-4a46-bdc6-a8f42a4c5d49",
+      "name": "HTTP Request to FastAPI"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request to FastAPI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "If technical",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Close Technical Complaint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Close Technical Complaint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If payment": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Close Technical Complaint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If technical": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request to FastAPI": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7b14397f-edf3-4acd-9f84-de6bb8003a06",
+  "meta": {
+    "instanceId": "ac75a14fba8ddf938eae4027d335e5ff4b2ee983b75cf134c6d9d0927fc20d46"
+  },
+  "id": "aGskbFcf7U4d225C",
+  "tags": []
+}
