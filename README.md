@@ -37,6 +37,7 @@ pip install -r requirements.txt
 cp .env.example .env
 
 # Run locally (no Docker)
+alembic upgrade head
 python -m uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 
 # Or with Docker Compose
