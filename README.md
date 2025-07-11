@@ -25,24 +25,29 @@ A FastAPI-based service for collecting customer complaints and enriching them vi
 
 ## 1. Installation & Dependencies
 
+**Clone the repo and copy .env**
 ```bash
-# Clone the repo
 git clone https://github.com/irefuse3585/complaints-api
 cd complaints-api
-
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Copy example env and edit only FastAPI/Docker vars
 cp .env.example .env
+# Edit the .env file and fill in all required variables
+```
 
-# Run locally (no Docker)
+**Variant 1: Local deployment (Uvicorn)** 
+```bash
+python3.13 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
 alembic upgrade head
-python -m uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-# Or with Docker Compose
+**Variant 2: Docker deployment**  
+```bash
 docker compose up --build -d
 ```
+
 ## Environment Variables
 
 All required environment variables are described in the [`.env.example`](.env.example) file.  
