@@ -213,3 +213,5 @@ docker logs complaint_service
 ## License
 
 Лицензия: [MIT](LICENSE)
+
+Task: https://docs.google.com/document/d/1W6u7UdD3adnMs-TSDbr6_s52GEMFloeKDtmcJSi6GRs/edit?tab=t.0
